@@ -115,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Carousel Logic
     let currentIndex = 0;
+    let autoScrollInterval;
     const cards = document.querySelectorAll('.review-card');
     const dots = document.querySelectorAll('.dot');
     const prevBtn = document.getElementById('prevBtn');
@@ -122,18 +123,22 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function getCardsPerView() {
       if (window.innerWidth <= 768) return 1;
-      if (window.innerWidth <= 992) return 2;
+      if (window.innerWidth <= 1024) return 2;
       return 3;
     }
 
     function updateCarousel() {
+      if (!cards.length) return;
+      
       const cardsPerView = getCardsPerView();
-      const maxIndex = Math.max(0, reviews.length - cardsPerView);
+      const totalCards = cards.length;
+      const maxIndex = Math.max(0, totalCards - cardsPerView);
       
       if (currentIndex > maxIndex) currentIndex = maxIndex;
+      if (currentIndex < 0) currentIndex = 0;
       
-      const cardWidth = cards[0].offsetWidth;
-      const gap = parseInt(window.getComputedStyle(track).gap) || 32; // 2rem = 32px
+      const cardWidth = cards[0].getBoundingClientRect().width;
+      const gap = parseFloat(window.getComputedStyle(track).gap) || 32;
       
       const offset = currentIndex * (cardWidth + gap);
       track.style.transform = `translateX(-${offset}px)`;
@@ -141,40 +146,59 @@ document.addEventListener('DOMContentLoaded', () => {
       // Update dots
       dots.forEach((dot, index) => {
         dot.classList.toggle('active', index === currentIndex);
+        // Hide dots that would go beyond maxIndex
+        dot.style.display = index > maxIndex ? 'none' : 'block';
       });
     }
 
     function goToSlide(index) {
       currentIndex = index;
       updateCarousel();
+      resetAutoScroll();
+    }
+
+    function resetAutoScroll() {
+      clearInterval(autoScrollInterval);
+      startAutoScroll();
+    }
+
+    function startAutoScroll() {
+      autoScrollInterval = setInterval(() => {
+        const cardsPerView = getCardsPerView();
+        const maxIndex = cards.length - cardsPerView;
+        
+        if (currentIndex < maxIndex) {
+          currentIndex++;
+        } else {
+          currentIndex = 0;
+        }
+        updateCarousel();
+      }, 5000);
     }
 
     prevBtn?.addEventListener('click', () => {
       if (currentIndex > 0) {
         currentIndex--;
         updateCarousel();
+        resetAutoScroll();
       }
     });
 
     nextBtn?.addEventListener('click', () => {
-      const maxIndex = reviews.length - getCardsPerView();
+      const maxIndex = cards.length - getCardsPerView();
       if (currentIndex < maxIndex) {
         currentIndex++;
         updateCarousel();
+        resetAutoScroll();
       }
     });
 
-    window.addEventListener('resize', updateCarousel);
-    
-    // Auto scroll
-    setInterval(() => {
-      const maxIndex = reviews.length - getCardsPerView();
-      if (currentIndex < maxIndex) {
-        currentIndex++;
-      } else {
-        currentIndex = 0;
-      }
+    window.addEventListener('resize', () => {
       updateCarousel();
-    }, 5000);
+    });
+    
+    // Initial call
+    setTimeout(updateCarousel, 100);
+    startAutoScroll();
   }
 });

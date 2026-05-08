@@ -141,8 +141,17 @@ p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1rem; }
   font-size: 1.4rem;
   font-weight: 800;
   color: var(--text-main);
-  text-decoration: none;
+  text-decoration: none !important;
+  border: none !important;
   letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  text-decoration: none !important;
+  border: none !important;
+  outline: none !important;
 }
 
 .logo-text .amp {
@@ -171,6 +180,25 @@ p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1rem; }
 
 .nav-links a:not(.btn):hover {
   color: var(--primary-color);
+}
+
+.nav-socials {
+  display: flex;
+  gap: 1rem;
+  margin-left: 1rem;
+  padding-left: 1.5rem;
+  border-left: 1px solid var(--glass-border);
+}
+
+.nav-socials a {
+  color: var(--text-main);
+  font-size: 1.1rem;
+  transition: var(--transition);
+}
+
+.nav-socials a:hover {
+  color: var(--primary-color);
+  transform: translateY(-2px);
 }
 
 .hamburger {
@@ -509,8 +537,9 @@ p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1rem; }
 
 .review-track {
   display: flex;
-  transition: transform 0.5s ease;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
   gap: 2rem;
+  will-change: transform;
 }
 
 .review-card {
