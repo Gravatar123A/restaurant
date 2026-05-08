@@ -64,14 +64,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }));
 
   // Navbar background on scroll
+  const navbar = document.querySelector('.navbar');
+  const hero = document.querySelector('.hero');
+
   window.addEventListener('scroll', () => {
-    const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 50) {
-      navbar.style.background = 'rgba(12, 10, 9, 0.95)';
-      navbar.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.5)';
+    if (window.scrollY > 100) {
+      navbar.classList.add('scrolled');
     } else {
-      navbar.style.background = 'rgba(12, 10, 9, 0.8)';
-      navbar.style.boxShadow = 'none';
+      navbar.classList.remove('scrolled');
+    }
+
+    // Hero Parallax
+    if (hero) {
+      const scrollPos = window.scrollY;
+      hero.style.backgroundPositionY = `${scrollPos * 0.5}px`;
     }
   });
 
